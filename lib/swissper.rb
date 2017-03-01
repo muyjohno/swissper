@@ -1,0 +1,62 @@
+require 'swissper/version'
+require 'swissper/player'
+require 'graph_matching'
+
+module Swissper
+  def self.pair(players, options = {})
+    Pairer.new(options).pair(players)
+  end
+
+  class Pairer
+    def initialize(options = {})
+      @delta_key = options[:delta_key] || :delta
+      @exclude_key = options[:exclude_key] || :exclude
+    end
+
+    def pair(player_data)
+      @players = player_data.shuffle
+      graph.maximum_weighted_matching(true).edges.map do |pairing|
+        [players[pairing[0]], players[pairing[1]]]
+      end
+    end
+
+    private
+
+    attr_reader :delta_key, :exclude_key, :players
+
+    def graph
+      edges = [].tap do |e|
+        players.each_with_index do |player, i|
+          players.each_with_index do |opp, j|
+            e << [i, j, delta(player,opp)] if permitted?(player, opp)
+          end
+        end
+      end
+      GraphMatching::Graph::WeightedGraph.send('[]', *edges)
+    end
+
+    def permitted?(a, b)
+      targets(a).include?(b) && targets(b).include?(a)
+    end
+
+    def delta(a, b)
+      0 - (delta_value(a) - delta_value(b))**2
+    end
+
+    def targets(player)
+      players - [player] - excluded_opponents(player)
+    end
+
+    def delta_value(player)
+      return player.send(delta_key) if player.respond_to?(delta_key)
+
+      0
+    end
+
+    def excluded_opponents(player)
+      return player.send(exclude_key) if player.respond_to?(exclude_key)
+
+      []
+    end
+  end
+end
