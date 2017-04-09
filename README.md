@@ -19,6 +19,7 @@ Or install it yourself as:
     $ gem install swissper
 
 ## Usage
+
 Use `Swissper.pair(players, options)` where `players` is an array of objects, and `options` is an optional hash of options.
 
 The `player` objects you pass can be any type of object you like, so long as there are no duplicates. There is a simple `Swissper::Player` class available for ease of use.
@@ -91,6 +92,29 @@ You can customise this key with the `exclude_key` option.
 Swissper.pair(players, exclude_key: :previous_opponents)
 # Player objects should respond to `previous_opponents`
 ```
+
+## Byes
+
+If your array of players contains an odd number, one player will be paired with the `Swissper::Bye` class.
+
+You can prevent players from receiving byes (e.g. if they've already received one) by passing `Swissper::Bye` in the `exclude` parameter of any player.
+
+```ruby
+snap = Swissper::Player.new
+crackle = Swissper::Player.new
+pop = Swissper::Player.new
+
+snap.exclude = [Swissper::Bye]
+crackle.exclude = [Swissper::Bye]
+
+Swissper.pair([snap, crackle, pop])
+# [
+#   [Swissper::Bye, #<Swissper::Player:0x007fb2f99cb838 @delta=0, @exclude=[]>],
+#   [#<Swissper::Player:0x007fb2f9accac0 @delta=0, @exclude=[Swissper::Bye]>, #<Swissper::Player:0x007fb2f91a8f98 @delta=0, @exclude=[Swissper::Bye]>]
+# ]
+```
+
+Please don't manually pass in `Swissper::Bye` in your array of players, passing in an odd-length array is the correct way to use byes.
 
 ## Development
 

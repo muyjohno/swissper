@@ -1,5 +1,6 @@
 require 'swissper/version'
 require 'swissper/player'
+require 'swissper/bye'
 require 'graph_matching'
 
 module Swissper
@@ -14,7 +15,7 @@ module Swissper
     end
 
     def pair(player_data)
-      @players = player_data.shuffle
+      @player_data = player_data
       graph.maximum_weighted_matching(true).edges.map do |pairing|
         [players[pairing[0]], players[pairing[1]]]
       end
@@ -22,7 +23,7 @@ module Swissper
 
     private
 
-    attr_reader :delta_key, :exclude_key, :players
+    attr_reader :delta_key, :exclude_key
 
     def graph
       edges = [].tap do |e|
@@ -57,6 +58,12 @@ module Swissper
       return player.send(exclude_key) if player.respond_to?(exclude_key)
 
       []
+    end
+
+    def players
+      @players ||= @player_data.clone.tap do |data|
+        data << Swissper::Bye unless data.length.even?
+      end.shuffle
     end
   end
 end

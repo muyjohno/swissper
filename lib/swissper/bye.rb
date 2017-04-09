@@ -1,3 +1,4 @@
 module Swissper
-  VERSION = "0.2.0"
+  class Bye
+  end
 end

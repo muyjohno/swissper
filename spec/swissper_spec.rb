@@ -53,5 +53,26 @@ RSpec.describe Swissper do
         end
       end
     end
+
+    context 'with odd number of players' do
+      %i(snap crackle pop).each do |name|
+        let(name) { Swissper::Player.new }
+      end
+      let(:players) { [snap, crackle, pop] }
+
+      it 'pairs correctly' do
+        expect(paired.length).to eq(2)
+        expect(paired.flatten).to match_array(players + [Swissper::Bye])
+      end
+
+      it 'prevents players from receiving a second bye' do
+        snap.exclude = [Swissper::Bye]
+        crackle.exclude = [Swissper::Bye]
+
+        paired.each do |p|
+          expect(p).to match_array([pop, Swissper::Bye]) if p.include?(pop)
+        end
+      end
+    end
   end
 end
