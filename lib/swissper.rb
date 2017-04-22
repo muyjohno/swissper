@@ -12,6 +12,7 @@ module Swissper
     def initialize(options = {})
       @delta_key = options[:delta_key] || :delta
       @exclude_key = options[:exclude_key] || :exclude
+      @bye_delta = options[:bye_delta] || -1
     end
 
     def pair(player_data)
@@ -23,7 +24,7 @@ module Swissper
 
     private
 
-    attr_reader :delta_key, :exclude_key
+    attr_reader :delta_key, :exclude_key, :bye_delta
 
     def graph
       edges = [].tap do |e|
@@ -50,6 +51,7 @@ module Swissper
 
     def delta_value(player)
       return player.send(delta_key) if player.respond_to?(delta_key)
+      return bye_delta if player == Swissper::Bye
 
       0
     end

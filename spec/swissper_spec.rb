@@ -73,6 +73,16 @@ RSpec.describe Swissper do
           expect(p).to match_array([pop, Swissper::Bye]) if p.include?(pop)
         end
       end
+
+      it 'always give bye to lowest players' do
+        snap.delta = 1
+        crackle.delta = 0
+        pop.delta = 0
+
+        paired.each do |p|
+          expect(p).not_to match_array([snap, Swissper::Bye]) if p.include?(Swissper::Bye)
+        end
+      end
     end
   end
 end
