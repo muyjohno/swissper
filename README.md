@@ -116,6 +116,10 @@ Swissper.pair([snap, crackle, pop])
 
 Please don't manually pass in `Swissper::Bye` in your array of players, passing in an odd-length array is the correct way to use byes.
 
+### Bye delta
+
+Byes have a default delta of -1 by default, but you can override this with the `bye_delta` option.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
